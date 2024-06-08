@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text To Image Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <a href="https://roadmast.github.io/Text_to_img/index.html">Home</a>
+        <a href="https://roadmast.github.io/Text_to_img/a.html">About</a>
+        <a href="https://roadmast.github.io/Text_to_img/s.html">Services</a>
+        <a href="https://roadmast.github.io/Text_to_img/k.html">Contact Us</a>
+    </div>
+    <div class="image-generator-container">
+        <h1><span class="dalle">Stable Diffusion</span> Image Generator</h1>
+        
+        <div class="content">
+            <div class="button-container">
+                <form id="image-form" action="{{ url_for('generate') }}" method="POST">
+                    <div class="input-container">
+                        <input type="text" class="prompt-input" placeholder="Enter your prompt here..." name="data" />
+                    </div>
+                    <button type="submit" class="generate-btn">Generate Image</button>
+                    <button type="button" class="generate-btn" id="help-btn">Help</button>
+                </form>
+                <form id="audio-form" action="{{ url_for('transcribe') }}" method="POST" enctype="multipart/form-data">
+                    <div class="input-containe">
+                        <label for="file-input">
+                            <img src="https://visualpharm.com/assets/622/Upload%20To%20The%20Cloud-595b40b85ba036ed117db6d8.svg" alt="upload"/>
+                        </label>
+                        <input id="file-input" type="file" name="audioFile" accept="audio/*" />
+                        <button type="submit" class="generate-btn"> Audio</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="image-container image-box">
+                <!-- Display the generated image -->
+                {% if result %}
+                    <img src="data:image/png;base64,{{ result }}" class="generated-image" alt="Generated Image">
+                {% else %}
+                    <img src="static/image-placeholder.png" class="generated-image" alt="Placeholder Image">
+                {% endif %}
+            </div>
+        </div>
+        
+        <form class="content">
+            <button type="submit" class="generate-bt">Download</button>
+        </form>
+        <a href="https://ruling-molli-kraghuram.koyeb.app/" id="google-link">
+            <img src="{{ url_for('static', filename='google.gif') }}" alt="Google" class="google-gif">
+        </a>
+    </div>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const audioForm = document.getElementById('audio-form');
+            const promptInput = document.querySelector('.prompt-input');
+
+    audioForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const formData = new FormData();
+        const audioFile = document.querySelector('input[name="audioFile"]').files[0]; // Get the selected audio file
+
+        formData.append('audioFile', audioFile); // Append the audio file to the FormData object
+
+        fetch(event.target.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            // Set the transcribed text in the input field
+            promptInput.value = data;
+        })
+        .catch(error => console.error('Error:', error));
+    });
+            document.getElementById('help-btn').addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                const promptInput = document.querySelector('.prompt-input');
+                const formData = new FormData();
+                formData.append('data', promptInput.value);
+
+                fetch('/help', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    // Set the generated prompt in the input field
+                    promptInput.value = data;
+                })
+                .catch(error => console.error('Error:', error));
+            });
+
+            const downloadBtn = document.querySelector(".generate-bt");
+            const generatedImage = document.querySelector(".generated-image");
+
+            downloadBtn.addEventListener("click", function(event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                const imageElement = document.querySelector(".generated-image");
+                const imageData = imageElement.src.split(",")[1];
+
+                if (imageData) {
+      // Create a data URL with the image data
+                    const dataUrl = "data:image/png;base64," + imageData;
+
+      // Create a temporary link element
+                    const link = document.createElement("a");
+                    link.href = dataUrl;
+                    link.download = "generated_image.png";
+
+      // Append the link to the DOM, click it, and remove it
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                 } else {
+                    showNotification("No image available to download.");
+                }
+            }); 
+    });
+    </script>
+    
+</body>
+</html>

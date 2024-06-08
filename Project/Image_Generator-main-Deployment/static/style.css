@@ -1,0 +1,159 @@
+* {
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 10px;
+}
+
+.navbar a {
+  color: black;
+  padding: 20px;
+  text-decoration: none;
+  margin-left: 10px;
+}
+
+.navbar a:hover {
+  color: lightgray;
+}
+
+
+body {
+   background-color: #6BBBFF;
+  color: #0a2342;
+}
+
+.image-generator-container {
+  max-width: 400px;
+  margin: 0 auto;
+  margin-left: 420px;
+}
+.image-container .generated-image{
+  border-radius: 30px;
+  border: 2px solid black;
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.image-generator-container h1 {
+  font-size: 24px;
+}
+
+.input-container {
+  align-items: center;
+}
+
+.image-generator-container h1 .dalle {
+  color: #fff;
+  background: #0a2342;
+  padding: 0 8px;
+}
+
+h1 {
+  font-size: 20px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.content .prompt-input {
+  padding: 8px 24px;
+  font-size: 16px;
+  width: 600px;
+  margin-bottom: 10px;
+  border: none;
+  box-shadow: 0 4px 30px -8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.content .generate-btn {
+  padding: 8px 24px;
+  font-size: 16px;
+  border: none;
+  margin-top: 20px;
+  box-shadow: 0 4px 30px -8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.content .generate-btn {
+  background: #2b4570;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 400ms ease;
+}
+
+.content .generate-btn:hover {
+  background: #0a2342;
+}
+
+.image-container {
+  width: 600px;
+  height: 600px;
+  margin-top: 15px;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.button-container {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.generate-btn {
+  margin-right: 10px; /* Adjust spacing between buttons */
+}
+
+
+.content .generate-bt {
+  padding: 8px 24px;
+  font-size: 16px;
+  border: none;
+  margin: auto;
+  margin-left: 20px;
+  margin-top: 20px;
+  box-shadow: 0 4px 30px -8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.content .generate-bt {
+  background: #2b4570;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 400ms ease;
+}
+
+.content .generate-bt:hover {
+  background: #0a2342;
+}
+
+.input-containe > input
+{
+    display: none;
+}
+
+.input-containe img
+{
+    width: 30px;
+    cursor: pointer;
+}
+
+.google-gif {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 100px; /* Adjust the width as needed */
+  height: auto; /* This will maintain the aspect ratio */
+}
+

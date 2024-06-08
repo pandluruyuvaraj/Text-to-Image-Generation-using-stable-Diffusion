@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prompt Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-......" crossorigin="anonymous" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #6BBBFF;
+        }
+
+        h1 {
+            color: #080101;
+            margin-top: 100px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            margin-right: 10px;
+            width: 600px;
+            height: 30px;
+        }
+
+        .upload-icon {
+            display: inline-block;
+            cursor: pointer;
+            font-size: 20px;
+            color: #333;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #3e8e41;
+        }
+
+        #output {
+            margin-top: 30px;
+        }
+
+        #output p {
+            background-color: #D6C7AE;
+            padding: 20px;
+            text-align: justify;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #lets-go-btn {
+            position: absolute;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            background-color: #080101;
+            top: 20px;
+            right: 20px;
+        }
+
+        a, u {
+            text-decoration: none;
+        }
+
+        #lets-go-btn:hover {
+            background-color: #333;
+        }
+        
+    </style>
+</head>
+<body>
+    <a id="lets-go-btn" href="https://elderly-daria-zb-tech.koyeb.app/">Let's Go</a>
+    <h1 class="animate__animated animate__bounceIn">Prompt Generator</h1>
+    <div>
+        <input type="text" id="input-text" placeholder="Enter your request">
+        <label for="audio-input" class="upload-icon">
+            <input type="file" id="audio-input" accept="audio/*" style="display: none;">
+            <i class="fas fa-upload"></i>
+        </label>
+    </div>
+    <button onclick="generatePrompts()">Generate Prompts</button>
+    <button onclick="transcribeAudio()">Transcribe Audio</button>
+    <div id="output"></div>
+    
+
+    <script>
+        function transcribeAudio() {
+            const audioInput = document.getElementById('audio-input');
+            const audioFile = audioInput.files[0];
+            const requestInput = document.getElementById('input-text'); // Get a reference to the input field
+            const button = document.querySelector('button[onclick="transcribeAudio()"]');
+            button.disabled = true;
+            button.textContent = 'Loading...';
+
+            const formData = new FormData();
+            formData.append('audioFile', audioFile); // Make sure the key matches the server-side code
+
+            fetch('/transcribe', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                requestInput.value = data.text; // Update the input field value with the transcribed text
+                button.disabled = false;
+                button.textContent = 'Transcribe Audio';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                button.disabled = false;
+                button.textContent = 'Transcribe Audio';
+            });
+        }
+
+        function generatePrompts(event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+
+            const requestInput = document.getElementById('input-text');
+            const request = requestInput.value;
+            const button = event.currentTarget;
+            button.disabled = true;
+            button.textContent = 'Loading...';
+
+            fetch('/generate_prompts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ request })
+            })
+            .then(response => response.json())
+            .then(prompts => {
+                const output = document.getElementById('output');
+                output.innerHTML = '';
+                prompts.forEach(prompt => {
+                    const promptElement = document.createElement('p');
+                    promptElement.innerText = prompt;
+                    output.appendChild(promptElement);
+                });
+                button.disabled = false;
+                button.textContent = 'Generate Prompts';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                button.disabled = false;
+                button.textContent = 'Generate Prompts';
+            });
+        }
+
+        const generatePromptsButton = document.querySelector('button[onclick="generatePrompts()"]');
+        generatePromptsButton.addEventListener('click', generatePrompts);
+
+        // Add an event listener for the 'Enter' key press on the input field
+        const inputField = document.getElementById('input-text');
+        inputField.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                generatePrompts(event);
+            }
+        });
+
+    </script>
+</body>
+</html> 
